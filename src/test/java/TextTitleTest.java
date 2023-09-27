@@ -34,7 +34,7 @@
  *
  */
 
-package org.jfree.chart.title;
+package org.banabas.dance.title;
 
 import java.awt.Color;
 import java.awt.Font;
