@@ -3,8 +3,9 @@ package com.example;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
-public class tloc {
+public class tassert {
     public static void main(String[] args) {
         if (args.length == 0) {
             System.out.println("Error: No file provided");
@@ -21,15 +22,19 @@ public class tloc {
             return;
         }
 
-        int lines = 0;
+        Pattern p1 = Pattern.compile("assert(Not)?(Equals|Null|Same)\\(.*\\)");
+        Pattern p2 = Pattern.compile("assert(ArrayEquals|False|That|Throws|True)\\(.*\\)");
+        Pattern p3 = Pattern.compile("fail\\(.*\\)");
+
+        int assertCount = 0;
         while (sc.hasNextLine()) {
             String line = sc.nextLine();
-            if (line.trim().length() > 0 && !line.trim().startsWith("//")) {
-                lines++;
+            if (p1.matcher(line).find() || p2.matcher(line).matches() || p3.matcher(line).matches()) {
+                assertCount++;
             }
         }
         sc.close();
 
-        System.out.println(lines);
+        System.out.println(assertCount);
     }
 }
