@@ -3,6 +3,7 @@ package com.example;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -28,9 +29,12 @@ public class tropcomp {
         }
 
         String testDirPath = args[0] + File.separator + "src" + File.separator + "test" + File.separator + "java";
-        File[] files = new File(testDirPath).listFiles();
+        ArrayList<File> testFiles = getAllFiles(new File(testDirPath));
+        File[] files = new File[testFiles.size()];
+        files = testFiles.toArray(files);
 
         int[] tlocVals = new int[files.length];
+        int[] tassertVals = new int[files.length];
         float[] tcmpVals = new float[files.length];
 
         for (int i = 0; i < files.length; i++) {
@@ -52,6 +56,7 @@ public class tropcomp {
             }
 
             tlocVals[i] = tlocVal;
+            tassertVals[i] = tassertVal;
             if (tassertVal == 0) {
                 tcmpVals[i] = Float.MAX_VALUE;
             } else {
@@ -72,9 +77,22 @@ public class tropcomp {
         
         for (int i = 0; i < files.length; i++) {
             if (tlocVals[i] >= tlocVal && tcmpVals[i] >= tcmpVal) {
-                System.out.println(tls(files[i]));
+                System.out.println(tls(files[i], tlocVals[i], tassertVals[i], tcmpVals[i]));
             }
         }
+    }
+
+    private static ArrayList<File> getAllFiles(File dir) {
+        File[] files = dir.listFiles();
+        ArrayList<File> allFiles = new ArrayList<File>();
+        for (File file : files) {
+            if (file.isDirectory()) {
+                allFiles.addAll(getAllFiles(file));
+            } else {
+                allFiles.add(file);
+            }
+        }
+        return allFiles;
     }
 
     private static int tloc(String line) {
@@ -91,92 +109,38 @@ public class tropcomp {
         return 0;
     }
 
-    private static String tls(File file) throws Exception {
+    private static String tls(File file, int lines, int asserts, double tcmp) throws Exception {
 
-        Path filePath = file.toPath();  
-        
-        String packageName = getPackageName(filePath);
-        String className = getClassName(filePath);
-        int lines = getLines(filePath);
-        int asserts = getAsserts(filePath);
-        double tcmp = (double) lines / asserts;
+        Path filePath = file.toPath();
+        String[] packageAndClassName = getPackageAndClassName(filePath);
+        String packageName = packageAndClassName[0];
+        String className = packageAndClassName[1];
         String line = filePath.toString() + "," + packageName + "," + className + "," + lines + "," + asserts + "," + tcmp;
         
         return line;
     }
 
-    
-    public static String getPackageName(Path file) throws Exception {
+    public static String[] getPackageAndClassName(Path file) throws Exception {
         Scanner sc;
 
         sc = new Scanner(file);
 
         String packageName = "";
+        String className = "";
         while (sc.hasNextLine()) {
             String line = sc.nextLine();
             if (line.trim().startsWith("package")) {
                 packageName = line.trim().substring(8, line.trim().length() - 1);
-                break;
             }
-        }
-        sc.close();
-
-        return packageName;
-    }
-
-    public static String getClassName(Path file) throws Exception {
-        Scanner sc;
-
-        sc = new Scanner(file);
-
-        String className = "";
-        while (sc.hasNextLine()) {
-            String line = sc.nextLine();
             if (line.trim().startsWith("public class")) {
                 className = line.trim().substring(13, line.trim().length() - 1);
+            }
+            if (!packageName.equals("") && !className.equals("")) {
                 break;
             }
         }
         sc.close();
 
-        return className;
+        return new String[] {packageName, className};
     }
-
-    public static int getLines(Path file) throws Exception{
-        Scanner sc;
-       
-        sc = new Scanner(file);
-
-        int lines = 0;
-        while (sc.hasNextLine()) {
-            String line = sc.nextLine();
-            if (line.trim().length() > 0 && !line.trim().startsWith("//")) {
-                lines++;
-            }
-        }
-        sc.close();
-
-        return lines;
-    }
-
-     public static int getAsserts(Path file) throws Exception{
-        Scanner sc;
-        
-        sc = new Scanner(file);
-       
-        Pattern p1 = Pattern.compile("assert(Not)?(Equals|Null|Same)\\(.*\\)");
-        Pattern p2 = Pattern.compile("assert(ArrayEquals|False|That|Throws|True)\\(.*\\)");
-        Pattern p3 = Pattern.compile("fail\\(.*\\)");
-
-        int assertCount = 0;
-        while (sc.hasNextLine()) {
-            String line = sc.nextLine();
-            if (p1.matcher(line).find() || p2.matcher(line).matches() || p3.matcher(line).matches()) {
-                assertCount++;
-            }
-        }
-        sc.close();
-
-        return assertCount;
-     }
 }
