@@ -58,7 +58,8 @@ public class tropcomp {
             tlocVals[i] = tlocVal;
             tassertVals[i] = tassertVal;
             if (tassertVal == 0) {
-                tcmpVals[i] = Float.MAX_VALUE;
+                // Ignore files that don't have asserts (not test files)
+                tcmpVals[i] = Float.MIN_VALUE;
             } else {
                 tcmpVals[i] = tlocVal/tassertVal;
             }
