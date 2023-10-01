@@ -39,21 +39,9 @@ public class tropcomp {
 
         for (int i = 0; i < files.length; i++) {
             File file = files[i];
-            Scanner sc;
-            try {
-                sc = new Scanner(file);
-            } catch (FileNotFoundException e) {
-                continue;
-            }
 
-            int tlocVal = 0;
-            int tassertVal = 0;
-
-            while (sc.hasNextLine()) {
-                String line = sc.nextLine();
-                tlocVal += tloc(line);
-                tassertVal += tassert(line);
-            }
+            int tlocVal = tloc(file);
+            int tassertVal = tassert(file);
 
             tlocVals[i] = tlocVal;
             tassertVals[i] = tassertVal;
@@ -63,8 +51,6 @@ public class tropcomp {
             } else {
                 tcmpVals[i] = tlocVal/tassertVal;
             }
-
-            sc.close();
         }
 
         int[] tlocValsSorted = tlocVals.clone();
@@ -72,7 +58,7 @@ public class tropcomp {
         Arrays.sort(tlocValsSorted);
         Arrays.sort(tcmpValsSorted);
 
-        int index = (int) Math.floor(files.length * threshold/100);
+        int index = (int) Math.floor(files.length * (1 - threshold/100));
         int tlocVal = tlocValsSorted[index];
         float tcmpVal = tcmpValsSorted[index];
         
@@ -96,18 +82,53 @@ public class tropcomp {
         return allFiles;
     }
 
-    private static int tloc(String line) {
-        if (line.trim().length() > 0 && !line.trim().startsWith("//")) {
-            return 1;
+    private static int tloc(File file) {
+        Scanner sc;
+        try {
+            sc = new Scanner(file);
+        } catch (FileNotFoundException e) {
+            return 0;
         }
-        return 0;
+
+        int lines = 0;
+        boolean comment = false;
+        while (sc.hasNextLine()) {
+            String line = sc.nextLine();
+            if (line.trim().startsWith("/*")) {
+                comment = true;
+                continue;
+            }
+            if (comment && line.trim().endsWith("*/")) {
+                comment = false;
+                continue;
+            }
+            if (line.trim().length() > 0 && !line.trim().startsWith("//") && !comment) {
+                lines++;
+            }
+        }
+        sc.close();
+
+        return lines;
     }
 
-    private static int tassert(String line) {
-        if (p1.matcher(line).find() || p2.matcher(line).matches() || p3.matcher(line).matches()) {
-            return 1;
+    private static int tassert(File file) {
+        Scanner sc;
+        try {
+            sc = new Scanner(file);
+        } catch (FileNotFoundException e) {
+            return 0;
         }
-        return 0;
+
+        int assertCount = 0;
+        while (sc.hasNextLine()) {
+            String line = sc.nextLine();
+            if (p1.matcher(line).find() || p2.matcher(line).matches() || p3.matcher(line).matches()) {
+                assertCount++;
+            }
+        }
+        sc.close();
+
+        return assertCount;
     }
 
     private static String tls(File file, int lines, int asserts, double tcmp) throws Exception {

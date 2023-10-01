@@ -22,9 +22,18 @@ public class tloc {
         }
 
         int lines = 0;
+        boolean comment = false;
         while (sc.hasNextLine()) {
             String line = sc.nextLine();
-            if (line.trim().length() > 0 && !line.trim().startsWith("//")) {
+            if (line.trim().startsWith("/*")) {
+                comment = true;
+                continue;
+            }
+            if (comment && line.trim().endsWith("*/")) {
+                comment = false;
+                continue;
+            }
+            if (line.trim().length() > 0 && !line.trim().startsWith("//") && !comment) {
                 lines++;
             }
         }
