@@ -10,9 +10,9 @@ import java.util.regex.Pattern;
 
 public class tropcomp {
 
-    static Pattern p1 = Pattern.compile("assert(Not)?(Equals|Null|Same)\\(.*\\)");
-    static Pattern p2 = Pattern.compile("assert(ArrayEquals|False|That|Throws|True)\\(.*\\)");
-    static Pattern p3 = Pattern.compile("fail\\(.*\\)");
+    static Pattern p1 = Pattern.compile("assert(Not)?(Equals|Null|Same)(.*)");
+    static Pattern p2 = Pattern.compile("assert(ArrayEquals|False|That|Throws|True)(.*)");
+    static Pattern p3 = Pattern.compile("fail(.*)");
 
     public static void main(String[] args) throws Exception {
         if (args.length < 2) {
@@ -119,7 +119,7 @@ public class tropcomp {
         int assertCount = 0;
         while (sc.hasNextLine()) {
             String line = sc.nextLine();
-            if (p1.matcher(line).find() || p2.matcher(line).matches() || p3.matcher(line).matches()) {
+            if (p1.matcher(line).find() || p2.matcher(line).find() || p3.matcher(line).find()) {
                 assertCount++;
             }
         }
