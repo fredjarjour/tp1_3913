@@ -30,41 +30,38 @@ public class tropcomp {
 
         String testDirPath = args[0] + File.separator + "src" + File.separator + "test" + File.separator + "java";
         ArrayList<File> testFiles = getAllFiles(new File(testDirPath));
-        File[] files = new File[testFiles.size()];
-        files = testFiles.toArray(files);
+        ArrayList<File> files = new ArrayList<File>();
 
-        int[] tlocVals = new int[files.length];
-        int[] tassertVals = new int[files.length];
-        float[] tcmpVals = new float[files.length];
+        ArrayList<Integer> tlocVals = new ArrayList<Integer>();
+        ArrayList<Integer> tassertVals = new ArrayList<Integer>();
+        ArrayList<Double> tcmpVals = new ArrayList<Double>();
 
-        for (int i = 0; i < files.length; i++) {
-            File file = files[i];
+        for (File file : testFiles) {
+            int tassertVal = tassert(file);
+            if (tassertVal == 0) {
+                continue;
+            }
 
             int tlocVal = tloc(file);
-            int tassertVal = tassert(file);
-
-            tlocVals[i] = tlocVal;
-            tassertVals[i] = tassertVal;
-            if (tassertVal == 0) {
-                // Ignore files that don't have asserts (not test files)
-                tcmpVals[i] = Float.MIN_VALUE;
-            } else {
-                tcmpVals[i] = tlocVal/tassertVal;
-            }
+            
+            files.add(file);
+            tlocVals.add(tlocVal);
+            tassertVals.add(tassertVal);
+            tcmpVals.add((double)tlocVal/tassertVal);
         }
 
-        int[] tlocValsSorted = tlocVals.clone();
-        float[] tcmpValsSorted = tcmpVals.clone();
+        int[] tlocValsSorted = tlocVals.stream().mapToInt(i -> i).toArray();
+        double[] tcmpValsSorted = tcmpVals.stream().mapToDouble(i -> i).toArray();
         Arrays.sort(tlocValsSorted);
         Arrays.sort(tcmpValsSorted);
 
-        int index = (int) Math.floor(files.length * (1 - threshold/100));
+        int index = (int) Math.floor(files.size() * (1 - threshold/100));
         int tlocVal = tlocValsSorted[index];
-        float tcmpVal = tcmpValsSorted[index];
+        double tcmpVal = tcmpValsSorted[index];
         
-        for (int i = 0; i < files.length; i++) {
-            if (tlocVals[i] >= tlocVal && tcmpVals[i] >= tcmpVal) {
-                System.out.println(tls(files[i], tlocVals[i], tassertVals[i], tcmpVals[i]));
+        for (int i = 0; i < files.size(); i++) {
+            if (tlocVals.get(i) >= tlocVal && tcmpVals.get(i) >= tcmpVal) {
+                System.out.println(tls(files.get(i), tlocVals.get(i), tassertVals.get(i), tcmpVals.get(i)));
             }
         }
     }
