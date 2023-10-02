@@ -26,6 +26,12 @@ public class tloc {
         while (sc.hasNextLine()) {
             String line = sc.nextLine();
             if (line.trim().startsWith("/*")) {
+                if (line.contains("*/") && !line.trim().endsWith("*/")) {
+                    lines++;
+                    continue;
+                } else if (line.endsWith("*/")) {
+                    continue;
+                }
                 comment = true;
                 continue;
             }
