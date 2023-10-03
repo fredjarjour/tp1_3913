@@ -27,14 +27,11 @@ public class tassert {
         Pattern p3 = Pattern.compile("fail(.*)");
 
         int assertCount = 0;
-        int lineNum = 1;
         while (sc.hasNextLine()) {
             String line = sc.nextLine();
             if (p1.matcher(line).find() || p2.matcher(line).find() || p3.matcher(line).find()) {
-                System.out.println(lineNum + ": " + line);
                 assertCount++;
             }
-            lineNum++;
         }
         sc.close();
 
