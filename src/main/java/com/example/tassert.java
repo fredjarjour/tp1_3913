@@ -30,7 +30,9 @@ public class tassert {
         while (sc.hasNextLine()) {
             String line = sc.nextLine();
             if (p1.matcher(line).find() || p2.matcher(line).find() || p3.matcher(line).find()) {
-                assertCount++;
+                if (!line.trim().startsWith("import")) {
+                    assertCount++;
+                }
             }
         }
         sc.close();

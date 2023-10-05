@@ -1,21 +1,18 @@
 package com.example;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class tls {
     public static void main(String[] args) throws Exception {
         if (args.length != 1 && args.length != 3) {
-            System.out.println("Error: Wrong format." + args.length);
+            System.out.println("Error: Wrong argument format.");
             return;
         }
         String folder = "";
@@ -24,12 +21,13 @@ public class tls {
         if (args.length == 3) {
             if (args[0].equals("-o")) {
                 if (!args[1].endsWith(".csv")) {
+                    System.out.println("Error: Wrong output file format.");
                     return;
                 }
                 outputFile = args[1];
                 folder = args[2];
             }else{
-               System.out.println("Error: Wrong format.");
+               System.out.println("Error: Wrong argument format.");
                return;
             }
 

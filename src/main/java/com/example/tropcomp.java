@@ -19,7 +19,7 @@ public class tropcomp {
             System.out.println("Usage: java tropcomp.java <path> <threshold>");
             return;
         }
-
+        
         double threshold;
         try {
             threshold = Float.parseFloat(args[1]);
@@ -137,35 +137,28 @@ public class tropcomp {
     private static String tls(File file, int lines, int asserts, double tcmp) throws Exception {
 
         Path filePath = file.toPath();
-        String[] packageAndClassName = getPackageAndClassName(filePath);
-        String packageName = packageAndClassName[0];
-        String className = packageAndClassName[1];
+        String packageName = getPackageName(filePath);
+        String className= file.getName().split(".")[0];
         String line = filePath.toString() + "," + packageName + "," + className + "," + lines + "," + asserts + "," + tcmp;
         
         return line;
     }
 
-    public static String[] getPackageAndClassName(Path file) throws Exception {
+    public static String getPackageName(Path file) throws Exception {
         Scanner sc;
 
         sc = new Scanner(file);
 
         String packageName = "";
-        String className = "";
         while (sc.hasNextLine()) {
             String line = sc.nextLine();
             if (line.trim().startsWith("package")) {
-                packageName = line.trim().substring(8, line.trim().length() - 1);
-            }
-            if (line.trim().startsWith("public class")) {
-                className = line.trim().substring(13, line.trim().length() - 1);
-            }
-            if (!packageName.equals("") && !className.equals("")) {
+                packageName = line.trim().split(" ")[1];
                 break;
             }
         }
         sc.close();
 
-        return new String[] {packageName, className};
+        return packageName;
     }
 }
