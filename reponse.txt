@@ -3,7 +3,7 @@ En effet, avec des seuils de 1% et de 5%, nous n'avons pas vu de fichier en sort
 En revanche avec un seuil de 10% on voit que la sortie donne effectivement des informations utiles.
 
 L'heuristique de tropcomp, soit qu'un fichier de test trop complexe aurait beaucoup de lignes de code et peu de tests en comparaison, est assez intuitif, mais il peut évidemment être significativement amélioré.
-En effet, dans l'implémentation que nous avons en ce moment, seulement les <seuil>% fichiers avec le plus de lignes de code peuvent être mis en sortie, ce qui signifie que même si des fichiers plus courts sont très complexes, il ne vont jamais être détectés.
+En effet, dans l'implémentation que nous avons en ce moment, seulement le top <seuil>% des fichiers avec le plus de lignes de code peuvent être mis en sortie, ce qui signifie que même si des fichiers plus courts sont très complexes, il ne vont jamais être détectés. Par exemple, les fichiers qui ont des lignes de code très longues, mais peu de lignes de code au total, ne seront jamais détectés.
 
 Une amélioration possible serait de pouvoir ajuster les valeurs de biais vers la longueur du code ou vers le ratio de tests/longueur.
 Ceci permettrait de mieux détecter les fichiers de test trop complexes, même s'ils sont courts, ou les fichiers de code très longs, même s'ils ont beaucoup de tests.

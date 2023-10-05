@@ -66,7 +66,7 @@ public class tls {
             Path filePath = files.get(i).toPath();
             String packageName = getPackageName(filePath);
             String className = files.get(i).getName().split("\\.")[0];
-            String filePathString = filePath.toString().substring(testDirPath.length() + 1);
+            String filePathString = filePath.toString().substring(testDir.toString().length() + 1);
             String line = filePathString + "," + packageName + "," + className + "," + tlocVals.get(i) + "," + tassertVals.get(i) + "," + tcmpVals.get(i);
             output.add(line);
 
@@ -168,6 +168,10 @@ public class tls {
             }
         }
         sc.close();
+        
+        if (packageName.endsWith(";")) {
+            packageName = packageName.substring(0, packageName.length() - 1);
+        }
 
         return packageName;
     }

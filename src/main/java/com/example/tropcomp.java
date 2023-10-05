@@ -191,6 +191,10 @@ public class tropcomp {
         }
         sc.close();
 
+        if (packageName.endsWith(";")) {
+            packageName = packageName.substring(0, packageName.length() - 1);
+        }
+
         return packageName;
     }
 }
