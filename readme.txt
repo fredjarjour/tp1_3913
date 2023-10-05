@@ -24,9 +24,11 @@ java -jar tls.jar <path vers un dossier ou fichier>
 
 Il est possible d'ajouter l'option -o pour créer un fichier de sortie. 
 
+<csvPath> est le path pour un fichier qui va etre creer et il doit se termine avec .csv 
+
 ex:
 
-java -jar tls.jar -o <path vers un csv> <path vers un dossier ou fichier>
+java -jar tls.jar -o <csvPath> <path vers un dossier ou fichier>
 
 
 Pour executer tropcomp.jar, il faut utiliser la commande suivante : 
@@ -35,9 +37,11 @@ java -jar tropcomp.jar <path vers un fichier> <seuil>
 
 Il est possible d'ajouter l'option -o pour créer un fichier de sortie.
 
+<csvPath> est le path pour un fichier qui va etre creer et il doit se termine avec .csv 
+
 ex:
 
-java -jar -o tropcomp.jar <path vers un fichier> <seuil>
+java -jar tropcomp.jar -o <csvPath> <path vers un fichier> <seuil>
 
 
 Vous pouvez également exécuter les fichiers java dictement en clonant le projet git:
