@@ -15,20 +15,29 @@ public class tropcomp {
     static Pattern p3 = Pattern.compile("fail(.*)");
 
     public static void main(String[] args) throws Exception {
-        if (args.length < 2) {
-            System.out.println("Usage: java -jar trocomp.jar <path> <threshold>");
+        if (args.length != 2 && args.length != 4) {
+            System.out.println("Usage 1: java -jar trocomp.jar <path> <threshold>");
+            System.out.println("Usage 2 to output csv: java -jar trocomp.jar -o <output_path.csv> <path> <threshold> ");
+            return;
+        }
+
+        if (args.length == 4 && !args[0].equals("-o") && !args[1].endsWith(".csv")) {
+            System.out.println("Usage 1: java -jar trocomp.jar <path> <threshold>");
+            System.out.println("Usage 2 to output csv: java -jar trocomp.jar -o <output_path.csv> <path> <threshold> ");
             return;
         }
         
         double threshold;
-        try {
-            threshold = Float.parseFloat(args[1]);
-        } catch (NumberFormatException e) {
-            System.out.println("Error: Threshold must be a number");
+        try{
+            threshold = Double.parseDouble(args[args.length - 1]);
+        } catch (Exception e) {
+            System.out.println("Usage 1: java -jar trocomp.jar <path> <threshold>");
+            System.out.println("Usage 2 to output csv: java -jar trocomp.jar -o <output_path.csv> <path> <threshold> ");
             return;
         }
 
-        String testDirPath = args[0] + File.separator + "src" + File.separator + "test" + File.separator + "java";
+        ArrayList<String> output = new ArrayList<String>();
+        String testDirPath = args[args.length - 2] + File.separator + "src" + File.separator + "test" + File.separator + "java";
         ArrayList<File> testFiles = getAllFiles(new File(testDirPath));
         ArrayList<File> files = new ArrayList<File>();
 
@@ -59,10 +68,24 @@ public class tropcomp {
         int tlocVal = tlocValsSorted[index];
         double tcmpVal = tcmpValsSorted[index];
         
+        
         for (int i = 0; i < files.size(); i++) {
             if (tlocVals.get(i) >= tlocVal && tcmpVals.get(i) >= tcmpVal) {
-                System.out.println(tls(files.get(i), tlocVals.get(i), tassertVals.get(i), tcmpVals.get(i)));
+                String line = tls(files.get(i), tlocVals.get(i), tassertVals.get(i), tcmpVals.get(i));
+                output.add(line);
+                System.out.println(line);
             }
+        }
+
+        if (args.length == 4) {
+            String outputPath = args[1];
+            File outputFile = new File(outputPath);
+            outputFile.createNewFile();
+            java.io.FileWriter fw = new java.io.FileWriter(outputFile);
+            for (String line : output) {
+                fw.write(line + "\n");
+            }
+            fw.close();
         }
     }
 
@@ -138,7 +161,7 @@ public class tropcomp {
 
         Path filePath = file.toPath();
         String packageName = getPackageName(filePath);
-        String className= file.getName().split(".")[0];
+        String className= file.getName().split("\\.")[0];
         String line = filePath.toString() + "," + packageName + "," + className + "," + lines + "," + asserts + "," + tcmp;
         
         return line;

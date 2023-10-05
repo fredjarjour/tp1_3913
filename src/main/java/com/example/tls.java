@@ -13,13 +13,21 @@ public class tls {
     static Pattern p3 = Pattern.compile("fail(.*)");
 
     public static void main(String[] args) throws Exception {
-        if (args.length != 1) {
-            System.out.println("Usage: java -jar tls.jar <path>");
+        if (args.length != 1 && args.length != 3) {
+            System.out.println("Usage 1: java -jar tls.jar <path>");
+            System.out.println("Usage 2 to output csv: java -jar tls.jar -o <output_path.csv> <path> ");
+            return;
+        }
+
+        if (args.length == 3 && !args[0].equals("-o") && !args[1].endsWith(".csv")) {
+            System.out.println("Usage 1: java -jar tls.jar <path>");
+            System.out.println("Usage 2 to output csv: java -jar tls.jar -o <output_path.csv> <path> ");
             return;
         }
 
 
-        String testDirPath = args[0];
+        ArrayList<String> output = new ArrayList<String>();
+        String testDirPath = args[args.length - 1];
         ArrayList<File> testFiles = getAllFiles(new File(testDirPath));
         ArrayList<File> files = new ArrayList<File>();
 
@@ -29,6 +37,10 @@ public class tls {
 
         for (File file : testFiles) {
             int tassertVal = tassert(file);
+
+            if (tassertVal == 0) {
+                continue;
+            }
 
             int tlocVal = tloc(file);
             
@@ -43,14 +55,26 @@ public class tls {
         for (int i = 0; i < files.size(); i++) {
 
             Path filePath = files.get(i).toPath();
-            String[] packageAndClassName = getPackageAndClassName(filePath);
-            String packageName = packageAndClassName[0];
-            String className = packageAndClassName[1];
+            String packageName = getPackageName(filePath);
+            String className = files.get(i).getName().split("\\.")[0];
             String filePathString = filePath.toString().substring(testDirPath.length() + 1);
             String line = filePathString + "," + packageName + "," + className + "," + tlocVals.get(i) + "," + tassertVals.get(i) + "," + tcmpVals.get(i);
-        
+            output.add(line);
+
             System.out.println(line);
         }
+
+        if (args.length == 3) {
+            String outputPath = args[1];
+            File outputFile = new File(outputPath);
+            outputFile.createNewFile();
+            java.io.FileWriter fw = new java.io.FileWriter(outputFile);
+            for (String line : output) {
+                fw.write(line + "\n");
+            }
+            fw.close();
+        }
+
     }
 
     private static ArrayList<File> getAllFiles(File dir) {
@@ -121,28 +145,21 @@ public class tls {
         return assertCount;
     }
 
-    public static String[] getPackageAndClassName(Path file) throws Exception {
+    public static String getPackageName(Path file) throws Exception {
         Scanner sc;
 
         sc = new Scanner(file);
 
         String packageName = "";
-        String className = "";
         while (sc.hasNextLine()) {
             String line = sc.nextLine();
             if (line.trim().startsWith("package")) {
-                packageName = line.trim().substring(8, line.trim().length() - 1);
-            }
-            if (line.trim().startsWith("public class")) {
-                className = line.trim().substring(13, line.trim().length() - 1);
-                className = className.replaceAll("\\s+","");
-            }
-            if (!packageName.equals("") && !className.equals("")) {
+                packageName = line.trim().split(" ")[1];
                 break;
             }
         }
         sc.close();
 
-        return new String[] {packageName, className};
+        return packageName;
     }
 }
