@@ -3,40 +3,49 @@ Allen Pinchuk (20217816)  &  Frédéric Jarjour (20220974)
 github : https://github.com/fredjarjour/tp1_3913
 
 
-## 1. Introduction
+## Comment Executer
 Ouvrir en ligne de commande le root du projet. Vous devriez voir ceci comme le path courant : 
 
-``` path/to/project/tp1_3913  ```
-
-## 2. Compilation
-
-?
-
-## 3. Exécution
-
-Pour executer tassert.jar, il faut utiliser la commande suivante : 
-```
-java -jar src\main\java\com\example\tassert.jar <path vers un fichier>
-```
+``` path/to/project/<nom du dossier zip> ```
 
 Pour executer tloc.jar, il faut utiliser la commande suivante : 
 ```
-java -jar src\main\java\com\example\tloc.jar <path vers un fichier>
+java -jar tloc.jar <path vers un fichier>
+```
+
+Pour executer tassert.jar, il faut utiliser la commande suivante : 
+```
+java -jar tassert.jar <path vers un fichier>
 ```
 
 Pour executer tls.jar, il faut utiliser la commande suivante : 
 ```
-java -jar src\main\java\com\example\tls.jar <path vers un dossier ou fichier> 
+java -jar tls.jar <path vers un dossier ou fichier> 
 ```
 Il est possible d'ajouter l'option -o pour créer un fichier de sortie. 
 
 ex:
 ```
-java -jar src\main\java\com\example\tls.jar <path vers un dossier ou fichier> -o
+java -jar -o tls.jar <path vers un dossier ou fichier>
 ```
 
 Pour executer tropcomp.jar, il faut utiliser la commande suivante : 
 ```
-java -jar src\main\java\com\example\tropcomp.jar <path vers un fichier> <seuil>
+java -jar tropcomp.jar <path vers un fichier> <seuil>
+```
+Il est possible d'ajouter l'option -o pour créer un fichier de sortie.
+
+ex:
+```
+java -jar -o tropcomp.jar <path vers un fichier> <seuil>
 ```
 
+Vous pouvez également exécuter les fichiers java dictement en clonant le projet git:
+```
+git clone https://github.com/fredjarjour/tp1_3913
+```
+
+Ensuite, vous pouvez exécuter une fonction avec:
+```
+java src\main\java\com\example\<nom du fichier>.java <arguments>
+```
