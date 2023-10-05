@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 public class tassert {
     public static void main(String[] args) {
         if (args.length == 0) {
-            System.out.println("Error: No file provided");
+            System.out.println("Usage: java -jar tassert.jar <path>");
             return;
         }
 

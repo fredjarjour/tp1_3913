@@ -16,7 +16,7 @@ public class tropcomp {
 
     public static void main(String[] args) throws Exception {
         if (args.length < 2) {
-            System.out.println("Usage: java tropcomp.java <path> <threshold>");
+            System.out.println("Usage: java -jar trocomp.jar <path> <threshold>");
             return;
         }
         
