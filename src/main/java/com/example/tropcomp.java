@@ -21,7 +21,7 @@ public class tropcomp {
             return;
         }
 
-        if (args.length == 4 && !args[0].equals("-o") && !args[1].endsWith(".csv")) {
+        if (args.length == 4 && (!args[0].equals("-o") || !args[1].endsWith(".csv"))) {
             System.out.println("Usage 1: java -jar trocomp.jar <path> <threshold>");
             System.out.println("Usage 2 to output csv: java -jar trocomp.jar -o <output_path.csv> <path> <threshold> ");
             return;
@@ -38,7 +38,16 @@ public class tropcomp {
 
         ArrayList<String> output = new ArrayList<String>();
         String testDirPath = args[args.length - 2] + File.separator + "src" + File.separator + "test" + File.separator + "java";
+        File testDir = new File(testDirPath);
+        if (!testDir.exists()) {
+            System.out.println("Error: Path does not exist");
+            return;
+        }
         ArrayList<File> testFiles = getAllFiles(new File(testDirPath));
+        if (testFiles.size() == 0) {
+            System.out.println("Error: No test files found");
+            return;
+        }
         ArrayList<File> files = new ArrayList<File>();
 
         ArrayList<Integer> tlocVals = new ArrayList<Integer>();
